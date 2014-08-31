@@ -72,7 +72,8 @@ public class ForecastFragment extends Fragment {
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        String location = prefs.getString(getString(R.string.pref_location_key)
+                , getString(R.string.pref_location_default));
         weatherTask.execute(location);
     }
 
@@ -113,7 +114,9 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //my way
-                // String forecast = ((TextView) view.findViewById(R.id.list_item_forecast_textview)).getText().toString();
+                /* String forecast = ((TextView) view.
+                findViewById(R.id.list_item_forecast_textview)).getText().toString();
+                 */
                 String forecast = mForecastAdapter.getItem(position);
                 //Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
@@ -139,13 +142,27 @@ public class ForecastFragment extends Fragment {
             // it must be converted to milliseconds in order to be converted to valid date.
             Date date = new Date(time * 1000);
             SimpleDateFormat format = new SimpleDateFormat("E, MMM d");
-            return format.format(date).toString();
+            return format.format(date);
         }
 
         /**
          * Prepare the weather high/lows for presentation.
          */
         private String formatHighLows(double high, double low) {
+
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+            String unitType = sharedPrefs.getString(getString(
+                    R.string.pref_units_key), getString(R.string.pref_units_metric));
+
+            if (unitType.equals(getString(R.string.pref_units_imperial))) {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -210,10 +227,6 @@ public class ForecastFragment extends Fragment {
         }
 
 
-
-
-
-
         @Override
         protected String[] doInBackground(String... params) {
 
@@ -237,7 +250,9 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                /* URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/
+                 daily?q=94043&mode=json&units=metric&cnt=7");
+                 */
 
                 final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
                 final String QUERY_PARAM = "q";
@@ -265,7 +280,7 @@ public class ForecastFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
