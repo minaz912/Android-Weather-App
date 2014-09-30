@@ -56,8 +56,6 @@ public class WeatherContract {
 		    return ContentUris.withAppendedId(CONTENT_URI, _id);
 	    }
 
-
-
     }
 
     /* Inner class that defines the table contents of the weather table */
