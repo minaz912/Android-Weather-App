@@ -49,15 +49,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         mContext = context;
     }
 
-    /**
-     * Helper method to handle insertion of a new location in the weather database.
-     *
-     * @param locationSetting The location string used to request updates from the server.
-     * @param cityName        A human-readable city name, e.g "Mountain View"
-     * @param lat             the latitude of the city
-     * @param lon             the longitude of the city
-     * @return the row ID of the added location.
-     */
     private long addLocation(String locationSetting, String cityName, double lat, double lon) {
 
         // First, check if the location with this city name exists in the db
@@ -85,13 +76,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         }
     }
 
-    /**
-     * Take the String representing the complete forecast in JSON Format and
-     * pull out the data we need to construct the Strings needed for the wireframes.
-     * <p/>
-     * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-     * into an Object hierarchy for us.
-     */
+
     private void getWeatherDataFromJson(String forecastJsonStr, int numDays,
                                         String locationSetting)
             throws JSONException {
@@ -240,7 +225,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                     .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
-                    .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                    .appendQueryParameter(DAYS_PARAM, String.valueOf(numDays))
                     .build();
 
             URL url = new URL(builtUri.toString());
